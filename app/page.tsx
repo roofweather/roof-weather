@@ -1916,21 +1916,8 @@ export default function ROOFHeroLive() {
     const [hourly, setHourly] = useState([])
     const [forecast, setForecast] = useState([])
     const [arcMessage, setArcMessage] = useState(null)
-    const [city, setCity] = useState(() => {
-        try {
-            const params = new URLSearchParams(window.location.search)
-            return params.get("city") || DEFAULT_CITY.name
-        } catch { return DEFAULT_CITY.name }
-    })
-    const [cityCoords, setCityCoords] = useState(() => {
-        try {
-            const params = new URLSearchParams(window.location.search)
-            const lat = params.get("lat")
-            const lon = params.get("lon")
-            if (lat && lon) return { lat: parseFloat(lat), lon: parseFloat(lon) }
-        } catch {}
-        return { lat: DEFAULT_CITY.lat, lon: DEFAULT_CITY.lon }
-    })
+    const [city, setCity] = useState(DEFAULT_CITY.name)
+    const [cityCoords, setCityCoords] = useState(null)
     const [utcOffset, setUtcOffset] = useState(0)
     const [loading, setLoading] = useState(true)
     const [searchQuery, setSearchQuery] = useState("")
@@ -2058,13 +2045,27 @@ export default function ROOFHeroLive() {
         setMeta("twitter:description", "Live weather for any city on earth. Plain language forecasts, no symbols, no percentages. Just the weather, told right.")
     }, [])
 
+    // Read URL params on the client after mount — lazy useState initialisers run on the
+    // server (where window is undefined) and React reuses those defaults during hydration,
+    // so URL params must be applied in a useEffect instead.
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search)
+        const lat = params.get("lat")
+        const lon = params.get("lon")
+        const cityParam = params.get("city")
+        if (lat && lon) {
+            if (cityParam) setCity(cityParam)
+            setCityCoords({ lat: parseFloat(lat), lon: parseFloat(lon) })
+        } else if (!navigator.geolocation) {
+            setCityCoords({ lat: DEFAULT_CITY.lat, lon: DEFAULT_CITY.lon })
+        }
+    }, [])
+
     useEffect(() => {
         if (!navigator.geolocation) return
         // Skip geolocation if URL already has city params or nogeo flag
-        try {
-            const params = new URLSearchParams(window.location.search)
-            if (params.get("lat") || params.get("city") || params.get("nogeo")) return
-        } catch {}
+        const params = new URLSearchParams(window.location.search)
+        if (params.get("lat") || params.get("city") || params.get("nogeo")) return
         setGeoStatus("detecting")
         navigator.geolocation.getCurrentPosition(
             (pos) => {
@@ -2082,12 +2083,13 @@ export default function ROOFHeroLive() {
                     })
                     .catch(() => { setCity("Your location"); setCityCoords({ lat: latitude, lon: longitude }); setGeoStatus("detected") })
             },
-            () => setGeoStatus("denied"),
+            () => { setGeoStatus("denied"); setCityCoords({ lat: DEFAULT_CITY.lat, lon: DEFAULT_CITY.lon }) },
             { timeout: 8000 }
         )
     }, [])
 
     useEffect(() => {
+        if (!cityCoords) return
         setLoading(true)
         setWeeklyHourly({})
         setDailySunsets([])
