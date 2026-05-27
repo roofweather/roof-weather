@@ -2003,7 +2003,7 @@ export default function ROOFHeroLive() {
         premiumTitle: "#fff",
         premiumSub: "#555",
         footerBg: "#0D0D0D",
-        footerText: "#333",
+        footerText: "#F5F4F0",
         shareText: "#555",
         recentText: "#333",
         recentBorder: "#1A1A1A",
