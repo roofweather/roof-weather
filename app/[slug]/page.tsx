@@ -1645,7 +1645,7 @@ export default function ROOFCity() {
                 <p style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: T.cultureLabel, margin: "0 0 20px" }}>Other cities on ROOF</p>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
                     {Object.entries(CITY_DATA).filter(([k]) => k !== slug).slice(0, 8).map(([k, c]) => (
-                        <a key={k} href={`/city/${k}`} style={{ padding: "8px 18px", border: `1px solid ${T.cityPillBorder}`, borderRadius: 20, fontSize: 13, color: T.cityPillText, textDecoration: "none", background: T.cityPillBg }}>
+                        <a key={k} href={`/${k}`} style={{ padding: "8px 18px", border: `1px solid ${T.cityPillBorder}`, borderRadius: 20, fontSize: 13, color: T.cityPillText, textDecoration: "none", background: T.cityPillBg }}>
                             {c.name}
                         </a>
                     ))}
