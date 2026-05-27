@@ -2,6 +2,23 @@
 
 import { useState, useEffect } from "react"
 
+// Parsed once when the browser evaluates this module — before any React
+// rendering or effects fire. window is unavailable during SSR so the catch
+// returns safe defaults; the browser re-evaluates the module with the real URL.
+const _urlParams = (() => {
+    try {
+        const p = new URLSearchParams(window.location.search)
+        return {
+            nogeo: !!p.get("nogeo"),
+            lat: p.get("lat") ? parseFloat(p.get("lat")) : null,
+            lon: p.get("lon") ? parseFloat(p.get("lon")) : null,
+            city: p.get("city") || null,
+        }
+    } catch {
+        return { nogeo: false, lat: null, lon: null, city: null }
+    }
+})()
+
 const DEFAULT_CITY = { name: "London", lat: 51.5074, lon: -0.1278 }
 const MAILCHIMP_URL = "https://mailchi.mp/3e2b5f94e259/roof-waitlist-1"
 
@@ -2045,34 +2062,33 @@ export default function ROOFHeroLive() {
         setMeta("twitter:description", "Live weather for any city on earth. Plain language forecasts, no symbols, no percentages. Just the weather, told right.")
     }, [])
 
-    // Read URL params on the client after mount — lazy useState initialisers run on the
-    // server (where window is undefined) and React reuses those defaults during hydration,
-    // so URL params must be applied in a useEffect instead.
+    // Apply URL params after mount. _urlParams is parsed at module load (before React
+    // renders) so it is always correct regardless of effect ordering.
     useEffect(() => {
-        const params = new URLSearchParams(window.location.search)
-        const lat = params.get("lat")
-        const lon = params.get("lon")
-        const cityParam = params.get("city")
-        if (lat && lon) {
-            if (cityParam) setCity(cityParam)
-            setCityCoords({ lat: parseFloat(lat), lon: parseFloat(lon) })
+        if (_urlParams.lat !== null && _urlParams.lon !== null) {
+            if (_urlParams.city) setCity(_urlParams.city)
+            setCityCoords({ lat: _urlParams.lat, lon: _urlParams.lon })
         } else if (!navigator.geolocation) {
             setCityCoords({ lat: DEFAULT_CITY.lat, lon: DEFAULT_CITY.lon })
         }
     }, [])
 
     useEffect(() => {
+        // Completely disabled when nogeo=1 or URL city/coords are present.
+        // Uses module-level _urlParams (parsed before React renders) so there is
+        // no timing gap between this check and the URL params effect above.
         if (!navigator.geolocation) return
-        // Skip geolocation if URL already has city params or nogeo flag
-        const params = new URLSearchParams(window.location.search)
-        if (params.get("lat") || params.get("city") || params.get("nogeo")) return
+        if (_urlParams.nogeo || _urlParams.lat !== null || _urlParams.city) return
         setGeoStatus("detecting")
         navigator.geolocation.getCurrentPosition(
             (pos) => {
+                // Defensive: bail out if URL params arrived after position resolved
+                if (_urlParams.nogeo || _urlParams.lat !== null || _urlParams.city) return
                 const { latitude, longitude } = pos.coords
                 fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`)
                     .then((r) => r.json())
                     .then((data) => {
+                        if (_urlParams.nogeo || _urlParams.lat !== null || _urlParams.city) return
                         const address = data.address || {}
                         const name = address.city || address.town || address.village || address.county || "Your location"
                         const country = address.country || ""
@@ -2081,7 +2097,12 @@ export default function ROOFHeroLive() {
                         setCityCoords({ lat: latitude, lon: longitude })
                         setGeoStatus("detected")
                     })
-                    .catch(() => { setCity("Your location"); setCityCoords({ lat: latitude, lon: longitude }); setGeoStatus("detected") })
+                    .catch(() => {
+                        if (_urlParams.nogeo || _urlParams.lat !== null || _urlParams.city) return
+                        setCity("Your location")
+                        setCityCoords({ lat: latitude, lon: longitude })
+                        setGeoStatus("detected")
+                    })
             },
             () => { setGeoStatus("denied"); setCityCoords({ lat: DEFAULT_CITY.lat, lon: DEFAULT_CITY.lon }) },
             { timeout: 8000 }
