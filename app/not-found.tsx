@@ -26,21 +26,14 @@ export default function NotFound() {
         href="/"
         aria-label="ROOF home"
         style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 6,
-          color: "#C8F0E0",
+          color: "#FFFFFF",
           textDecoration: "none",
           fontWeight: 700,
-          fontSize: 28,
-          letterSpacing: "0.14em",
+          fontSize: 22,
+          letterSpacing: "0.1em",
         }}
       >
-        <span>R</span>
-        <svg width="16" height="14" viewBox="0 0 16 14" aria-hidden="true">
-          <path d="M8 0 L16 14 H0 Z" fill="#F0C97A" />
-        </svg>
-        <span>OF</span>
+        ROOF
       </a>
       <h1
         style={{
