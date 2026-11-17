@@ -22,7 +22,7 @@ export default function FrontPage({
   locate: boolean
   query?: Query
 }) {
-  const place = usePlace(fixed, locate, query)
+  const { place, geo } = usePlace(fixed, locate, query)
   const { data, loading, error, reload } = useForecast(place)
   const [openDay, setOpenDay] = useState<number | null>(null)
   const theme = posterTheme(data?.code ?? 1, data?.temp ?? 16, data?.night ?? false, brandTakeover.enabled)
@@ -52,8 +52,16 @@ export default function FrontPage({
       >
         <SiteHeader />
         <div className="front-col">
+          {geo === "detecting" && <p className="front-live" role="status">Finding your city...</p>}
+          {geo === "detected" && (
+            <p className="front-live" role="status">
+              <span className="front-live-dot" aria-hidden="true" />
+              Your city, automatically
+            </p>
+          )}
           <CitySearch />
-          {loading && !data && <p className="front-status">Fetching the weather.</p>}
+          {geo === "detecting" && !data && <p className="front-status">Finding your city...</p>}
+          {geo !== "detecting" && loading && !data && <p className="front-status">Fetching the weather.</p>}
           {error && !data && (
             <div className="front-status">
               <p>The weather did not load. Try again in a moment.</p>

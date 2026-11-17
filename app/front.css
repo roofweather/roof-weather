@@ -111,6 +111,32 @@
   text-align: center;
 }
 
+.front-live {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 0 0;
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.front-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .front-live-dot { animation: front-live 2.4s ease-in-out infinite; }
+}
+
+@keyframes front-live {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
 .front-search {
   position: relative;
   z-index: 5;
