@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next"
 import "./base.css"
+import "./front.css"
 
 const site = "https://www.roofweather.app"
 
@@ -10,6 +11,7 @@ export const metadata: Metadata = {
     template: "%s",
   },
   description: "What the weather actually means. City by city.",
+  appleWebApp: { capable: true, title: "ROOF", statusBarStyle: "default" },
 }
 
 export const viewport: Viewport = {

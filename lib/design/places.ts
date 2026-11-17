@@ -7,6 +7,9 @@ export type Place = {
   lon: number
   slug?: string
   note?: string
+  culture?: string
+  bestTime?: string
+  tip?: string
 }
 
 export const LONDON: Place = {
@@ -16,6 +19,9 @@ export const LONDON: Place = {
   lon: -0.1278,
   slug: "london",
   note: CITY_DATA.london.weatherNote,
+  culture: CITY_DATA.london.culture,
+  bestTime: CITY_DATA.london.bestTime,
+  tip: CITY_DATA.london.tip,
 }
 
 export function placeFromSlug(raw: string): Place | null {
@@ -29,6 +35,9 @@ export function placeFromSlug(raw: string): Place | null {
     lon: city.lon,
     slug,
     note: city.weatherNote,
+    culture: city.culture,
+    bestTime: city.bestTime,
+    tip: city.tip,
   }
 }
 

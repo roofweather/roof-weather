@@ -23,17 +23,23 @@ export function usePlace(fixed: Place | null, locate: boolean, query?: Query) {
       setPlace(fixed)
       return
     }
-    const lat = query?.lat ? parseFloat(query.lat) : NaN
-    const lon = query?.lon ? parseFloat(query.lon) : NaN
+    const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null
+    const lat = parseFloat(query?.lat || params?.get("lat") || "")
+    const lon = parseFloat(query?.lon || params?.get("lon") || "")
+    const cityName = query?.city || params?.get("city") || ""
+    const skipGeo = !locate || query?.nogeo || params?.get("nogeo")
     if (!Number.isNaN(lat) && !Number.isNaN(lon)) {
-      setPlace({ name: query?.city || "Chosen city", lat, lon })
+      setPlace({ name: cityName || "Chosen city", lat, lon })
       return
     }
-    if (!locate || query?.nogeo || typeof navigator === "undefined" || !navigator.geolocation) {
+    if (skipGeo || typeof navigator === "undefined" || !navigator.geolocation) {
       setPlace(LONDON)
       return
     }
     let cancel = false
+    const backup = window.setTimeout(() => {
+      if (!cancel) setPlace((current) => current || LONDON)
+    }, 8000)
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords
@@ -61,6 +67,7 @@ export function usePlace(fixed: Place | null, locate: boolean, query?: Query) {
     )
     return () => {
       cancel = true
+      window.clearTimeout(backup)
     }
       // fixed is read from the render that changed lat/lon/name.
     // eslint-disable-next-line react-hooks/exhaustive-deps

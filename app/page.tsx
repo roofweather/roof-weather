@@ -1,8 +1,9 @@
 import type { Metadata } from "next"
-import Home from "./home-client"
+import FrontPage from "@/components/front-page"
+import type { Query } from "@/lib/design/use-place"
 
-const title = "ROOF -- Weather, honestly."
-const description = "Live weather for any city on earth. Plain language forecasts, no symbols, no percentages. Just the weather, told right."
+const title = "ROOF. Weather, honestly."
+const description = "Live weather for any city on earth. Plain language forecasts. Just the weather, told right."
 const url = "https://www.roofweather.app"
 
 export const metadata: Metadata = {
@@ -23,6 +24,6 @@ export const metadata: Metadata = {
   },
 }
 
-export default function Page() {
-  return <Home />
+export default function Page({ searchParams }: { searchParams?: Query }) {
+  return <FrontPage fixed={null} locate query={searchParams} />
 }

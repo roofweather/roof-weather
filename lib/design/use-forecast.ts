@@ -37,6 +37,15 @@ export type HourPoint = {
   sub: string
 }
 
+export type Slot = {
+  time: string
+  label: string
+  temp: number
+  rain: number
+  code: number
+  night: boolean
+}
+
 export type DayPoint = {
   date: string
   name: string
@@ -52,6 +61,7 @@ export type DayPoint = {
   outfit: string
   sunrise: string
   sunset: string
+  slots: Slot[]
 }
 
 export type Forecast = {
@@ -94,6 +104,24 @@ function fallbackArc(hours: { temp: number; label: string; code: number }[]): st
   if (rain) return `Rain shows up around ${rain.label}. The day runs from ${min}° to ${max}°.`
   if (max - min <= 2) return `Steady from here, about ${min}° to ${max}°.`
   return `From ${hours[0].temp}° now, toward ${last.temp}° by ${last.label}. The day runs ${min}° to ${max}°.`
+}
+
+function sampleSlots(
+  hours: { time: string; hour: number; temp: number; rain: number; code: number; night: boolean; label: string }[],
+  isToday: boolean,
+  cityHour: number
+): Slot[] {
+  const pool = isToday ? hours.filter((hour) => hour.hour >= cityHour) : hours
+  const picked = pool.filter((hour, index) => (isToday && index === 0) || hour.hour % 3 === 0)
+  const chosen = picked.length ? picked : pool.filter((_, index) => index % 3 === 0)
+  return chosen.map((hour, index) => ({
+    time: hour.time,
+    label: isToday && index === 0 && hour.hour === cityHour ? "Now" : hour.label,
+    temp: hour.temp,
+    rain: hour.rain,
+    code: hour.code,
+    night: hour.night,
+  }))
 }
 
 function buildForecast(place: Place, raw: any): Forecast | null {
@@ -188,6 +216,8 @@ function buildForecast(place: Place, raw: any): Forecast | null {
     const dayHours = all.filter((hour) => hour.date === date && (index > 0 || hour.hour >= cityHour))
     const context = voice(getDayContext({ code, rain, max, min, wind }, dayHours))
     const outfit = voice(getOutfit(place.name, max, apparentMax, rain, code, humidity, sunByDate[date]?.uv ?? 0, 13))
+    const dayAll = all.filter((hour) => hour.date === date)
+    const slots = sampleSlots(dayAll, index === 0, cityHour)
     return {
       date,
       name: getDayName(date, index),
@@ -203,6 +233,7 @@ function buildForecast(place: Place, raw: any): Forecast | null {
       outfit,
       sunrise: sunByDate[date]?.sunrise || "",
       sunset: sunByDate[date]?.sunset || "",
+      slots,
     }
   })
 

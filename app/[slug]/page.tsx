@@ -1,7 +1,8 @@
 import type { Metadata } from "next"
 import { notFound, permanentRedirect } from "next/navigation"
 import { CITY_DATA, resolveSlug } from "@/lib/cities"
-import CityView from "./city-view"
+import { placeFromSlug } from "@/lib/design/places"
+import FrontPage from "@/components/front-page"
 
 const SITE = "https://www.roofweather.app"
 
@@ -46,5 +47,7 @@ export default function CityPage({ params }: Props) {
   const slug = resolveSlug(params.slug)
   if (!slug || !CITY_DATA[slug]) notFound()
   if (params.slug !== slug) permanentRedirect(`/${slug}`)
-  return <CityView slug={slug} city={CITY_DATA[slug]} />
+  const place = placeFromSlug(slug)
+  if (!place) notFound()
+  return <FrontPage fixed={place} locate={false} />
 }
