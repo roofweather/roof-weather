@@ -10,11 +10,11 @@ export function SiteHeader() {
         <Image src="/icon-192.png" width={26} height={26} alt="" />
         ROOF
       </a>
-      <p className="front-tag">Weather, honestly.</p>
       <nav className="front-nav" aria-label="Site">
         <a href="/about">About</a>
         <a href={WAITLIST}>Early access</a>
       </nav>
+      <p className="front-tag">Weather, honestly.</p>
       {brandTakeover.enabled && brandTakeover.line ? (
         <p className="front-sponsor" role="status">
           <span className="front-dot" aria-hidden="true" />

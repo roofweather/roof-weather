@@ -41,18 +41,17 @@
 }
 
 .front-bar {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  grid-template-areas: "logo tag nav";
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: 8px 12px;
   width: min(920px, 100%);
   margin: 0 auto;
-  padding: calc(8px + env(safe-area-inset-top)) 16px 0;
+  padding: calc(12px + env(safe-area-inset-top)) 16px 6px;
 }
 
 .front-logo {
-  grid-area: logo;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -65,7 +64,7 @@
 .front-logo img { border-radius: 50%; display: block; }
 
 .front-tag {
-  grid-area: tag;
+  flex: 1 0 100%;
   margin: 0;
   text-align: center;
   font-size: 15px;
@@ -73,7 +72,6 @@
 }
 
 .front-nav {
-  grid-area: nav;
   display: flex;
   justify-content: flex-end;
   gap: 14px;
@@ -109,7 +107,7 @@
 .front-col {
   width: min(920px, 100%);
   margin: 0 auto;
-  padding: 0 16px 8px;
+  padding: 0 16px 36px;
   text-align: center;
 }
 
@@ -117,12 +115,12 @@
   position: relative;
   z-index: 5;
   width: min(440px, 100%);
-  margin: 8px auto 0;
+  margin: 12px auto 0;
 }
 
 .front-search input {
   width: 100%;
-  height: 46px;
+  height: 48px;
   padding: 0 16px;
   border: 1.5px solid #0D0D0D;
   background: #F5F4F0;
@@ -158,90 +156,104 @@
 .front-results button span:last-child { color: #3F3E3A; font-size: 14px; }
 .front-results p { margin: 0; padding: 12px 14px; color: #3F3E3A; }
 
+.front-brand {
+  margin: 18px 0 0;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
 .front-place {
-  margin: 10px 0 0;
-  font-size: clamp(28px, 5vw, 48px);
-  line-height: 1;
-  letter-spacing: -0.04em;
+  margin: 8px 0 0;
+  font-size: clamp(32px, 6vw, 56px);
+  line-height: 0.95;
+  letter-spacing: -0.045em;
   font-weight: 500;
 }
 
-.front-when {
-  margin: 2px 0 0;
-  font-size: 15px;
-  font-weight: 600;
+.front-when,
+.front-facts {
+  margin: 10px auto 0;
+  max-width: 28em;
+  font-size: 16px;
+  font-weight: 550;
   color: var(--soft);
 }
 
 .front-temp {
   margin: 0;
-  font-size: clamp(112px, 28vw, 220px);
+  font-size: clamp(112px, 30vw, 240px);
   line-height: 0.78;
   letter-spacing: -0.07em;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
 }
 
-.front-facts {
-  margin: 4px auto 0;
-  max-width: 34em;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--soft);
-}
-
 .front-msg {
-  margin: 8px auto 0;
-  max-width: 18em;
-  font-size: clamp(24px, 4.4vw, 46px);
-  line-height: 1.08;
-  letter-spacing: -0.035em;
+  margin: 22px auto 0;
+  max-width: 16em;
+  font-size: clamp(32px, 5vw, 58px);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
   font-weight: 500;
   color: var(--fg);
 }
 
-.front-msg.long {
-  font-size: clamp(20px, 3.2vw, 32px);
-  line-height: 1.16;
-  max-width: 24em;
+.front-msg.mid { font-size: clamp(26px, 3.6vw, 42px); max-width: 18em; }
+.front-msg.long { font-size: clamp(22px, 2.6vw, 32px); line-height: 1.18; max-width: 22em; }
+
+.front-rule {
+  width: 72px;
+  height: 4px;
+  margin: 22px auto 0;
+  background: var(--rule, currentColor);
+  border: 0;
+}
+
+.front-today {
+  text-align: center;
 }
 
 .front-kicker {
-  margin: 12px 0 2px;
+  margin: 26px 0 6px;
   font-size: 15px;
   font-weight: 700;
   text-align: center;
 }
 
 .front-arc {
-  margin: 0 auto 6px;
+  margin: 0 auto 8px;
   text-align: center;
   max-width: 36em;
   font-size: 16px;
-  line-height: 1.35;
+  line-height: 1.45;
   font-weight: 500;
 }
 
 .front-hours {
   display: flex;
-  gap: 4px;
+  justify-content: center;
+  justify-content: safe center;
+  gap: 8px;
+  width: 100%;
   overflow-x: auto;
   overscroll-behavior-x: contain;
-  padding: 2px 0 8px;
+  padding: 8px 16px 10px;
   text-align: center;
 }
 
 .hour {
-  flex: 0 0 68px;
+  flex: 0 0 72px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  color: var(--fg);
+  gap: 6px;
+  color: inherit;
 }
 
-.hour .when { font-size: 13px; font-weight: 700; color: var(--soft); }
-.hour .deg { font-size: 20px; font-weight: 600; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.hour .when { font-size: 13px; font-weight: 700; }
+.hour .deg { font-size: 22px; font-weight: 500; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
 .hour .rain { font-size: 13px; font-weight: 700; min-height: 16px; }
 
 .front-sheet {
@@ -249,28 +261,30 @@
   color: #0D0D0D;
 }
 
-.front-sheet .front-col { text-align: left; padding-top: 12px; padding-bottom: 8px; }
+.front-sheet .front-col { text-align: left; padding-top: 22px; padding-bottom: 12px; }
 
 .front-pair {
   display: grid;
-  gap: 8px;
+  gap: 10px;
 }
 
-.front-card { padding: 14px 14px 16px; }
-.front-card h2 { margin: 0 0 6px; font-size: 15px; font-weight: 700; }
-.front-card p { margin: 0; font-size: 17px; line-height: 1.4; }
+.front-card { padding: 16px 16px 18px; }
+.front-card h2 { margin: 0 0 8px; font-size: 15px; font-weight: 700; }
+.front-card p { margin: 0; font-size: 17px; line-height: 1.45; }
 
 .front-days { margin-top: 8px; }
-.front-days h2 { margin: 8px 0 2px; font-size: 15px; font-weight: 700; }
-.front-range-note { margin: 0 0 4px; color: #3F3E3A; font-size: 15px; font-weight: 600; }
+.front-days h2,
+.front-range-note { text-align: center; }
+.front-days h2 { margin: 26px 0 6px; font-size: 15px; font-weight: 700; }
+.front-range-note { margin: 0 0 8px; color: #3F3E3A; font-size: 16px; font-weight: 550; }
 
 .day-row {
   width: 100%;
   display: grid;
-  grid-template-columns: minmax(108px, 140px) minmax(64px, 1fr) auto auto;
-  gap: 4px 10px;
+  grid-template-columns: minmax(108px, 140px) minmax(70px, 1fr) auto auto;
+  gap: 6px 12px;
   align-items: center;
-  padding: 10px 0;
+  padding: 12px 0;
   border-top: 1px solid rgba(13, 13, 13, 0.16);
   text-align: left;
   min-height: 52px;
@@ -284,10 +298,12 @@
 
 .day-open {
   display: flex;
-  gap: 6px;
+  justify-content: center;
+  justify-content: safe center;
+  gap: 8px;
   overflow-x: auto;
   overscroll-behavior-x: contain;
-  padding: 4px 0 12px;
+  padding: 8px 16px 14px;
   border-top: 1px solid rgba(13, 13, 13, 0.08);
 }
 
@@ -369,15 +385,6 @@
 }
 
 .num { font-variant-numeric: tabular-nums; }
-
-@media (max-width: 720px) {
-  .front-bar {
-    grid-template-columns: 1fr auto;
-    grid-template-areas:
-      "logo nav"
-      "tag tag";
-  }
-}
 
 @media (min-width: 760px) {
   .front-pair { grid-template-columns: 1fr 1fr; }

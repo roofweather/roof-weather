@@ -27,6 +27,7 @@ export default function FrontPage({
   const [openDay, setOpenDay] = useState<number | null>(null)
   const theme = posterTheme(data?.code ?? 1, data?.temp ?? 16, data?.night ?? false, brandTakeover.enabled)
   const message = data?.message ?? ""
+  const msgClass = message.length > 180 ? "front-msg long" : message.length > 110 ? "front-msg mid" : "front-msg"
   const country = data ? countryLine(data.place) : ""
 
   return (
@@ -44,6 +45,7 @@ export default function FrontPage({
           ["--block" as string]: theme.block,
           ["--fg" as string]: theme.fg,
           ["--soft" as string]: theme.soft,
+          ["--rule" as string]: theme.rule,
           background: theme.block,
           color: theme.fg,
         }}
@@ -60,17 +62,26 @@ export default function FrontPage({
           )}
           {data && (
             <>
+              <p className="front-brand">ROOF</p>
               <h1 className="front-place">{data.place.name}</h1>
-              <p className="front-when">
-                {country ? `${country}. ` : ""}
-                {data.cityDay}, {data.localTime}
-              </p>
+              {country && <p className="front-facts">{country}</p>}
+              <p className="front-when">{data.cityDay}, {data.localTime}</p>
               <p className="front-temp">{data.temp}°</p>
               <p className="front-facts">
                 {data.condition}
                 {data.showFeels ? `. Feels like ${data.apparent}°` : ""}. {data.windLabel}
               </p>
-              <h2 className={message.length > 160 ? "front-msg long" : "front-msg"}>{message}</h2>
+              <h2 className={msgClass}>{message}</h2>
+              <hr className="front-rule" />
+            </>
+          )}
+        </div>
+      </section>
+
+      {data && (
+        <section className="front-sheet" style={{ background: theme.paper, color: theme.ink }}>
+          <div className="front-col">
+            <div className="front-today">
               <h2 className="front-kicker">Rest of today</h2>
               <p className="front-arc">{data.arc}</p>
               <div className="front-hours" aria-label="Rest of today, hour by hour">
@@ -83,14 +94,7 @@ export default function FrontPage({
                   </div>
                 ))}
               </div>
-            </>
-          )}
-        </div>
-      </section>
-
-      {data && (
-        <section className="front-sheet" style={{ background: theme.paper, color: theme.ink }}>
-          <div className="front-col">
+            </div>
             <div className="front-pair">
               <article className="front-card" style={{ background: theme.wear, color: theme.wearFg }}>
                 <h2>What to wear</h2>
