@@ -10,8 +10,7 @@ import { voice } from "@/lib/design/voice"
 import { WeatherMark } from "./weather-mark"
 import { CitySearch } from "./city-search"
 import { SiteFooter, SiteHeader } from "./site-chrome"
-
-const WAITLIST = "https://mailchi.mp/3e2b5f94e259/roof-waitlist-1"
+import { RoofIntelligence } from "./roof-intelligence"
 
 export default function FrontPage({
   fixed,
@@ -29,6 +28,7 @@ export default function FrontPage({
   const message = data?.message ?? ""
   const msgClass = message.length > 180 ? "front-msg long" : message.length > 110 ? "front-msg mid" : "front-msg"
   const country = data ? countryLine(data.place) : ""
+  const liveClass = theme.fg === "#F5F4F0" ? "front-live on-dark" : "front-live"
 
   return (
     <div
@@ -52,9 +52,9 @@ export default function FrontPage({
       >
         <SiteHeader />
         <div className="front-col">
-          {geo === "detecting" && <p className="front-live" role="status">Finding your city...</p>}
+          {geo === "detecting" && <p className={liveClass} role="status">Finding your city...</p>}
           {geo === "detected" && (
-            <p className="front-live" role="status">
+            <p className={liveClass} role="status">
               <span className="front-live-dot" aria-hidden="true" />
               Your city, automatically
             </p>
@@ -117,11 +117,7 @@ export default function FrontPage({
             <CityNotes place={data.place} />
             <SavedCities place={data.place} />
             <Share city={data.place.name} temp={data.temp} message={data.message} />
-            <section className="front-access">
-              <h2>Want ROOF everywhere?</h2>
-              <p>Longer forecasts, saved cities, and alerts are on the way.</p>
-              <a className="front-btn" href={WAITLIST}>Get early access</a>
-            </section>
+            <RoofIntelligence city={cityName(data.place.name)} />
           </div>
           <SiteFooter />
         </section>
@@ -189,6 +185,12 @@ function DayList({
       })}
     </div>
   )
+}
+
+function cityName(name: string) {
+  const city = name.split(",")[0].trim()
+  if (!city || city === "Your location" || city === "Chosen city") return ""
+  return city
 }
 
 function rangeStyle(lo: number, hi: number, min: number, max: number) {

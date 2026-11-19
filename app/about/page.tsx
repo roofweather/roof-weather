@@ -1,4 +1,5 @@
 import { CitySearch } from "@/components/city-search"
+import { RoofIntelligence } from "@/components/roof-intelligence"
 import { SiteFooter, SiteHeader } from "@/components/site-chrome"
 
 const points = [
@@ -62,11 +63,7 @@ export default function AboutPage() {
               </article>
             ))}
           </div>
-          <section className="front-access">
-            <h2>Want ROOF everywhere?</h2>
-            <p>Save cities. Longer forecasts. Alerts. Early access is open.</p>
-            <a className="front-btn" href="https://mailchi.mp/3e2b5f94e259/roof-waitlist-1">Get early access</a>
-          </section>
+          <RoofIntelligence suggestCity />
         </div>
         <SiteFooter />
       </section>

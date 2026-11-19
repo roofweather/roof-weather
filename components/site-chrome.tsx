@@ -1,8 +1,6 @@
 import Image from "next/image"
 import { brandTakeover } from "@/lib/brand"
 
-const WAITLIST = "https://mailchi.mp/3e2b5f94e259/roof-waitlist-1"
-
 export function SiteHeader() {
   return (
     <header className="front-bar">
@@ -12,7 +10,7 @@ export function SiteHeader() {
       </a>
       <nav className="front-nav" aria-label="Site">
         <a href="/about">About</a>
-        <a href={WAITLIST}>Early access</a>
+        <a href="/join">Join</a>
       </nav>
       <p className="front-tag">Weather, honestly.</p>
       {brandTakeover.enabled && brandTakeover.line ? (
@@ -32,7 +30,7 @@ export function SiteFooter() {
       <p>
         <a href="/about">About</a>
         <span aria-hidden="true"> · </span>
-        <a href={WAITLIST}>Early access</a>
+        <a href="/join">Join</a>
       </p>
       <p>Weather data from Open-Meteo.</p>
     </footer>
